@@ -8,12 +8,20 @@ where T : IPoolClient
     private Transform anchor;
     private GameObject prefab;
     private Queue<T> queue = new();
-    public Pool(Transform anchor, GameObject prefab, int n)
+
+    private int batch;
+    public Pool(Transform anchor, GameObject prefab, int batch)
     {
         this.anchor = anchor;
         this.prefab = prefab;
+        this.batch = batch;
 
-        for (int _ = 0; _ < n; _++)
+        CreateBatch();
+    }
+
+    private void CreateBatch()
+    {
+        for (int _ = 0; _ < batch; _++)
         {
             GameObject go = GameObject.Instantiate(prefab);
             if (go.TryGetComponent(out T client))
@@ -24,7 +32,6 @@ where T : IPoolClient
             {
                 throw new ArgumentException("Prefab doesn't have a IPoolClient as component.");
             }
-
         }
     }
 
@@ -36,6 +43,7 @@ where T : IPoolClient
 
     public T Get()
     {
+        if (queue.Count == 0) CreateBatch();
         T client = queue.Dequeue();
         client.Arise(anchor.position, anchor.rotation);
         return client;

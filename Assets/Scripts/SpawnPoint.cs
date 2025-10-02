@@ -12,7 +12,7 @@ public class SpawnPoint : MonoBehaviour
     [SerializeField] private Transform target;
     void Start()
     {
-        pool = new(transform, prefab, 10);
+        pool = new(transform, prefab, 2);
         StartCoroutine(Spawn());
     }
 
