@@ -44,6 +44,7 @@ where T : IPoolClient
     public T Get()
     {
         if (queue.Count == 0) CreateBatch();
+        
         T client = queue.Dequeue();
         client.Arise(anchor.position, anchor.rotation);
         return client;
